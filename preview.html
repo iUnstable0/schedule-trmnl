@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Today Schedule preview</title>
+<link rel="stylesheet" href="https://usetrmnl.com/css/latest/plugins.css">
+<script src="https://usetrmnl.com/js/latest/plugins.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/liquidjs@10.21.0/dist/liquid.browser.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body.environment { background: #ddd; padding: 20px; height: auto; display: block; font-family: Inter, sans-serif; }
+  .screen { transform: none !important; position: relative !important; }
+  .bar { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center; font: 14px Inter, sans-serif; margin: 0 0 14px; max-width: 1040px; }
+  .bar label { display: flex; align-items: center; gap: 6px; }
+  .bar input[type=range] { width: 300px; }
+  .bar .time { font-weight: 700; min-width: 190px; }
+  #status { font: 13px Inter, sans-serif; color: #444; margin-top: 8px; max-width: 1040px; }
+  #err { white-space: pre-wrap; color: #900; font: 13px monospace; }
+</style>
+</head>
+<body class="environment trmnl">
+<form class="bar" autocomplete="off" onsubmit="return false">
+  <label>Data
+    <select id="src">
+      <option value="fixtures">Demo day (fixtures/)</option>
+      <option value="busy">Busy day (fixtures/)</option>
+      <option value="live">My real feeds (config.json)</option>
+    </select>
+  </label>
+  <label>Day <input id="day" type="date" value="2026-10-27"></label>
+  <button id="reload" type="button">Reload feeds</button>
+  <label><input id="live" type="checkbox"> Real "now"</label>
+  <label>Time <input id="slot" type="range" min="0" max="95" value="47"></label>
+  <span class="time" id="timeLabel"></span>
+  <label>Clock
+    <select id="clock"><option value="12">12-hour</option><option value="24">24-hour</option></select>
+  </label>
+</form>
+<div class="screen screen--v2 screen--lg screen--density-2x screen--4bit" style="width:1040px;height:780px;outline:1px solid #888"><div class="view view--full" id="view"></div></div>
+<div id="status"></div>
+<pre id="err"></pre>
+
+<script>
+(async function () {
+  const $ = (id) => document.getElementById(id);
+  const engine = new liquidjs.Liquid();
+  const pad = (n) => String(n).padStart(2, '0');
+  const qs = new URLSearchParams(location.search);
+  if (qs.get('t')) { const [h, m] = qs.get('t').split(':').map(Number); $('slot').value = h * 4 + Math.floor(m / 15); }
+  if (qs.get('day')) $('day').value = qs.get('day');
+  if (qs.get('src')) $('src').value = qs.get('src');
+
+  function nowIso() {
+    if ($('live').checked) return new Date().toISOString();
+    const s = Number($('slot').value);
+    const local = `${$('day').value}T${pad(Math.floor(s / 4))}:${pad((s % 4) * 15)}:00`;
+    const guess = new Date(local + 'Z');
+    const ny = new Date(guess.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    const utc = new Date(guess.toLocaleString('en-US', { timeZone: 'UTC' }));
+    return new Date(guess.getTime() + (utc - ny)).toISOString();
+  }
+
+  function todayLocal() {
+    const p = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+    return p;
+  }
+
+  let reload = false;
+  let fetchedAt = null;
+  let inFlight = false;
+  let queued = false;
+  let seq = 0;
+  let tpl = null;
+  async function render() {
+    if (inFlight) { queued = true; return; }
+    inFlight = true;
+    try {
+      await draw();
+    } finally {
+      inFlight = false;
+      if (queued) { queued = false; render(); }
+    }
+  }
+
+  async function draw() {
+    const id = ++seq;
+    try {
+      $('err').textContent = '';
+      $('slot').disabled = $('live').checked;
+      $('day').disabled = $('live').checked;
+      if ($('live').checked) $('day').value = todayLocal();
+      const iso = nowIso();
+      $('timeLabel').textContent = new Date(iso).toLocaleString('en-US', { timeZone: 'America/New_York', weekday: 'short', hour: 'numeric', minute: '2-digit' }) + ($('live').checked ? ' (real now)' : ' (simulated)');
+      const wantReload = reload;
+      reload = false;
+      const [markup, data] = await Promise.all([
+        fetch('markup.liquid?' + Date.now()).then((r) => r.text()),
+        fetch(`/api/today?src=${$('src').value}&clock=${$('clock').value}&now=${encodeURIComponent(iso)}${wantReload ? '&reload=1' : ''}`).then(async (r) => {
+          if (!r.ok) throw new Error(await r.text());
+          fetchedAt = Number(r.headers.get('x-feeds-fetched-at'));
+          return r.json();
+        }),
+      ]);
+      if (id !== seq) return;
+      tpl = markup;
+      window.lastData = data;
+      $('view').innerHTML = await engine.parseAndRender(tpl, data);
+      if (window.executeTerminalize) window.executeTerminalize();
+      const fetched = $('src').value === 'live' && fetchedAt ? ` · feeds fetched ${new Date(fetchedAt).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' })}` : '';
+      $('status').textContent = `${data.events.length} on the timeline · window ${data.window.start}–${data.window.end} · ${data.due.length} due · phase ${data.phase}${fetched}` + (data.errors.length ? ' · errors: ' + data.errors.join('; ') : '');
+    } catch (e) {
+      $('err').textContent = String(e && e.stack || e);
+    }
+  }
+
+  for (const id of ['src', 'day', 'live', 'clock']) $(id).addEventListener('change', render);
+  $('reload').addEventListener('click', () => { reload = true; render(); });
+  $('slot').addEventListener('input', render);
+  setInterval(() => { if ($('live').checked) render(); }, 60 * 1000);
+  await render();
+})();
+</script>
+</body>
+</html>

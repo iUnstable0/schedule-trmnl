@@ -1,0 +1,228 @@
+<style>
+  .sc, .sc * { font-family: "Inter Variable", Inter, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; box-sizing: border-box; }
+  .sc { width: 100%; height: 100%; display: flex; flex-direction: column; color: #000; padding: 26px 32px 22px; }
+
+  .sc-head { display: flex; align-items: baseline; justify-content: space-between; height: 54px; border-bottom: 1px solid #000; padding-bottom: 12px; flex: none; }
+  .sc-day { font-size: 32px; font-weight: 600; letter-spacing: -0.5px; line-height: 1; }
+  .sc-date { font-size: 32px; font-weight: 300; letter-spacing: -0.5px; margin-left: 10px; }
+  .sc-sum { font-size: 16px; font-weight: 400; }
+
+  .sc-body { flex: 1; display: flex; gap: 40px; margin-top: 18px; min-height: 0; }
+  .sc-eyebrow { font-size: 14px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; }
+
+  .sc-left { flex: 0 0 600px; width: 600px; min-width: 0; display: flex; flex-direction: column; }
+  .sc-tl { position: relative; flex: none; margin-top: 10px; }
+  .sc-hr { position: absolute; left: 64px; right: 0; height: 1px; background: #d0d0d0; }
+  .sc-hl { position: absolute; left: 0; width: 52px; text-align: right; font-size: 14px; font-weight: 400; line-height: 16px; margin-top: -8px; }
+  .sc-gap { position: absolute; left: 64px; right: 0; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 400; line-height: 20px; z-index: 2; }
+  .sc-gap.past { color: #8a8a8a; }
+  .sc-mark { position: absolute; right: 10px; max-width: 50%; margin-top: 4px; font-size: 14px; font-weight: 500; line-height: 16px; z-index: 4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sc-mark.passed { color: #8a8a8a; font-weight: 400; }
+  .sc-mark.up { margin-top: -20px; }
+  .ev-d { font-size: 15px; font-weight: 500; line-height: 1.3; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ev--past .ev-d { font-weight: 400; }
+
+  .ev { position: absolute; z-index: 3; padding: 3px 10px 0 12px; overflow: hidden; border-left: 3px solid #000; background: #eeeeee; border-radius: 0 3px 3px 0; }
+  .ev--now { border-left-width: 7px; padding-left: 10px; }
+  .ev--nested { box-shadow: 0 0 0 2px #fff; }
+  .ev--past { border-left-color: #b0b0b0; }
+  .ev-t { font-size: 18px; font-weight: 500; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ev--now .ev-t { font-weight: 700; }
+  .ev--past .ev-t { font-weight: 400; }
+  .ev-m { font-size: 15px; font-weight: 400; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+  .ev--tall .ev-t { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .ev-tag { font-size: 14px; font-weight: 500; letter-spacing: 1px; margin-left: 8px; }
+  .ev--one { padding-top: 0; display: flex; align-items: center; gap: 8px; }
+  .ev--one .ev-s { font-size: 15px; font-weight: 400; white-space: nowrap; flex: none; }
+  .ev--one .ev-t { font-size: 16px; }
+
+  .sc-nowline { position: absolute; left: 64px; right: 0; height: 2px; margin-top: -1px; background: #000; z-index: 1; }
+  .sc-nowlabel { position: absolute; left: 0; width: 52px; text-align: right; font-size: 14px; font-weight: 700; line-height: 16px; margin-top: -8px; z-index: 6; white-space: nowrap; }
+  .sc-empty { position: absolute; left: 64px; right: 0; text-align: center; font-size: 18px; font-weight: 400; line-height: 24px; z-index: 2; }
+
+  .sc-side { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .sc-next { flex: none; min-height: 230px; border-bottom: 1px solid #000; padding-bottom: 16px; display: flex; flex-direction: column; }
+  .sc-hero { font-size: 64px; font-weight: 300; letter-spacing: -0.5px; line-height: 1; margin-top: 10px; }
+  .sc-ntitle { font-size: 22px; font-weight: 600; line-height: 1.2; margin-top: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .sc-nmeta { font-size: 16px; font-weight: 400; margin-top: 8px; line-height: 1.3; display: flex; align-items: flex-start; gap: 8px; }
+  .sc-nplace { font-size: 16px; font-weight: 400; margin-top: 4px; line-height: 1.3; display: flex; align-items: flex-start; gap: 8px; }
+  .sc-nplace span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .ic { flex: none; width: 17px; height: 17px; margin-top: 2px; }
+  .ic--sm { width: 14px; height: 14px; margin-top: 1px; margin-right: 5px; vertical-align: -2px; }
+  .sc-note { font-size: 16px; font-weight: 500; margin-top: 6px; line-height: 1.3; display: flex; align-items: flex-start; gap: 8px; }
+  .sc-note span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sc-done { font-size: 26px; font-weight: 500; line-height: 1.2; margin-top: 16px; }
+  .sc-done small { display: block; font-size: 16px; font-weight: 400; margin-top: 8px; }
+
+  .sc-due { flex: 1; min-height: 0; padding-top: 18px; overflow: hidden; }
+  .sc-grp { display: flex; gap: 14px; margin-top: 14px; }
+  .sc-when { flex: none; width: 62px; font-size: 15px; font-weight: 500; line-height: 20px; white-space: nowrap; }
+  .sc-grp.passed { color: #8a8a8a; }
+  .sc-gbody { min-width: 0; flex: 1; }
+  .sc-course { font-size: 16px; font-weight: 600; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sc-grp.passed .sc-course { font-weight: 400; }
+  .sc-di { font-size: 15px; font-weight: 400; line-height: 1.35; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sc-di b { font-weight: 500; }
+  .sc-more { font-size: 15px; font-weight: 400; margin-top: 12px; }
+  .sc-none { font-size: 16px; font-weight: 400; margin-top: 12px; }
+
+  .sc-allday { flex: none; padding-top: 14px; border-top: 1px solid #000; }
+  .sc-chips { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; }
+  .sc-chip { font-size: 15px; font-weight: 400; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+  .sc-err { flex: none; font-size: 14px; font-weight: 400; margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+</style>
+
+{%- assign TL_H = 640 -%}
+{%- assign AREA_X = 64 -%}
+{%- assign AREA_W = 536 -%}
+{%- assign now_y = now.y | times: TL_H | round -%}
+{%- assign max_items = 6 -%}
+{%- if all_day.size > 0 -%}{%- assign max_items = 4 -%}{%- endif -%}
+{%- capture ic_clock -%}<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>{%- endcapture -%}
+{%- capture ic_pin -%}<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5s-6.5-5.6-6.5-11.5a6.5 6.5 0 0 1 13 0c0 5.9-6.5 11.5-6.5 11.5z"/><circle cx="12" cy="10" r="2.5"/></svg>{%- endcapture -%}
+{%- capture ic_flag -%}<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 4.5h11.5l-2.5 4.5 2.5 4.5H6"/></svg>{%- endcapture -%}
+{%- capture ic_flag_sm -%}<svg class="ic ic--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 4.5h11.5l-2.5 4.5 2.5 4.5H6"/></svg>{%- endcapture -%}
+
+<div class="sc">
+  <div class="sc-head">
+    <div><span class="sc-day">{{ weekday }}</span><span class="sc-date">{{ date }}</span></div>
+    <div class="sc-sum">{{ summary }}</div>
+  </div>
+
+  <div class="sc-body">
+    <div class="sc-left">
+      <div class="sc-tl" style="height:{{ TL_H }}px">
+        {%- for t in ticks -%}
+          {%- assign ty = t.y | times: TL_H | round -%}
+          {%- assign dist = ty | minus: now_y | abs -%}
+          <div class="sc-hr" style="top:{{ ty }}px"></div>
+          {%- if dist > 18 -%}<div class="sc-hl" style="top:{{ ty }}px">{{ t.label }}</div>{%- endif -%}
+        {%- endfor -%}
+
+        {%- for g in gaps -%}
+          {%- assign gy = g.y | times: TL_H | round -%}
+          {%- assign gh = g.h | times: TL_H | round -%}
+          {%- assign gb = gy | plus: gh -%}
+          {%- assign ly = gh | divided_by: 2 | plus: gy -%}
+          {%- assign nd = ly | minus: now_y | abs -%}
+          {%- if nd < 16 -%}
+            {%- assign below = now_y | plus: 18 -%}
+            {%- assign above = now_y | minus: 18 -%}
+            {%- assign fits = below | plus: 10 -%}
+            {%- if fits <= gb -%}{%- assign ly = below -%}{%- else -%}{%- assign ly = above -%}{%- endif -%}
+          {%- endif -%}
+          {%- for t in ticks -%}
+            {%- assign ty = t.y | times: TL_H | round -%}
+            {%- assign td = ly | minus: ty | abs -%}
+            {%- if td < 14 -%}
+              {%- assign below = ty | plus: 16 -%}
+              {%- assign fits = below | plus: 10 -%}
+              {%- if fits <= gb -%}{%- assign ly = below -%}{%- else -%}{%- assign ly = ty | minus: 16 -%}{%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+          <div class="sc-gap{% if g.state == "past" %} past{% endif %}" style="top:{{ ly | minus: 10 }}px">{{ g.label }}</div>
+        {%- endfor -%}
+
+        {%- for k in marks -%}
+          {%- assign ky = k.y | times: TL_H | round -%}
+          {%- assign limit = TL_H | minus: 24 -%}
+          <div class="sc-mark{% if k.passed %} passed{% endif %}{% if ky > limit %} up{% endif %}" style="top:{{ ky }}px">{{ ic_flag_sm }}{{ k.label }}</div>
+        {%- endfor -%}
+
+        {%- for e in events -%}
+          {%- assign top = e.y | times: TL_H | round -%}
+          {%- assign hp = e.h | times: TL_H | round | minus: 4 -%}
+          {%- if hp < 22 -%}{%- assign hp = 22 -%}{%- endif -%}
+          {%- assign indent = e.depth | times: 22 -%}
+          {%- assign left = e.x | times: AREA_W | plus: AREA_X | round | plus: indent -%}
+          {%- assign w = e.w | times: AREA_W | minus: 8 | round | minus: indent -%}
+          {%- assign z = e.depth | plus: 3 -%}
+          {%- if hp < 44 -%}
+            <div class="ev ev--{{ e.state }} ev--one{% if e.depth > 0 %} ev--nested{% endif %}" style="top:{{ top | plus: 2 }}px;height:{{ hp }}px;left:{{ left }}px;width:{{ w }}px;z-index:{{ z }}">
+              {%- if e.w == 1 -%}<span class="ev-s">{{ e.start_label }}</span>{%- endif -%}<span class="ev-t">{{ e.title }}{% if e.due != "" and e.w == 1 %} · Due: {{ e.due }}{% elsif e.due != "" %} · Due{% endif %}</span>{% if e.tag != "" %}<span class="ev-tag">{{ e.tag }}</span>{% endif %}
+            </div>
+          {%- else -%}
+            <div class="ev ev--{{ e.state }}{% if hp >= 92 %} ev--tall{% endif %}{% if e.depth > 0 %} ev--nested{% endif %}" style="top:{{ top | plus: 2 }}px;height:{{ hp }}px;left:{{ left }}px;width:{{ w }}px;z-index:{{ z }}">
+              <div class="ev-t">{{ e.title }}{% if e.tag != "" %}<span class="ev-tag">{{ e.tag }}</span>{% endif %}</div>
+              {%- if e.due != "" and hp < 66 -%}
+                <div class="ev-m">{{ e.meta }} · Due: {{ e.due }}</div>
+              {%- else -%}
+                <div class="ev-m">{{ e.meta }}</div>
+                {%- if e.due != "" -%}<div class="ev-d">{{ ic_flag_sm }}{{ e.due }}</div>{%- endif -%}
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- if events.size == 0 -%}
+          {%- assign ey = TL_H | divided_by: 2 -%}
+          {%- for t in ticks -%}
+            {%- assign ty = t.y | times: TL_H | round -%}
+            {%- assign td = ey | minus: ty | abs -%}
+            {%- if td < 16 -%}{%- assign ey = ty | plus: 24 -%}{%- endif -%}
+          {%- endfor -%}
+          {%- assign nd = ey | minus: now_y | abs -%}
+          {%- if nd < 16 -%}{%- assign ey = now_y | plus: 24 -%}{%- endif -%}
+          <div class="sc-empty" style="top:{{ ey | minus: 12 }}px">Nothing on the calendar</div>
+        {%- endif -%}
+
+        <div class="sc-nowline" style="top:{{ now_y }}px"></div>
+        <div class="sc-nowlabel" style="top:{{ now_y }}px">{{ now.label }}</div>
+      </div>
+    </div>
+
+    <div class="sc-side">
+      <div class="sc-next">
+        {%- if up_next -%}
+          <div class="sc-eyebrow">{% if up_next.kind == "due" %}Due next{% elsif phase == "morning" %}First today{% else %}Up next{% endif %}</div>
+          <div class="sc-hero">{{ up_next.time }}</div>
+          <div class="sc-ntitle">{{ up_next.title }}</div>
+          {%- if up_next.ends != "" -%}<div class="sc-nmeta">{{ ic_clock }}<span>{{ up_next.ends }}</span></div>{%- endif -%}
+          {%- if up_next.place != "" -%}<div class="sc-nplace">{% if up_next.kind == "due" %}{{ ic_flag }}{% else %}{{ ic_pin }}{% endif %}<span>{{ up_next.place }}</span></div>{%- endif -%}
+          {%- if up_next.note != "" -%}<div class="sc-note">{% if up_next.kind == "event" %}{{ ic_flag }}{% else %}{{ ic_clock }}{% endif %}<span>{{ up_next.note }}</span></div>{%- endif -%}
+        {%- else -%}
+          <div class="sc-eyebrow">Up next</div>
+          <div class="sc-done">{% if phase == "empty" %}Nothing today{% else %}Done for today{% endif %}{% if has_current %}<small>Finish what's in progress, then you're free.</small>{% elsif phase == "empty" %}<small>No events and nothing due.</small>{% else %}<small>Nothing else on the calendar.</small>{% endif %}</div>
+        {%- endif -%}
+      </div>
+
+      <div class="sc-due">
+        <div class="sc-eyebrow">Due today</div>
+        {%- if due_groups.size > 0 -%}
+          {%- assign shown = 0 -%}
+          {%- for g in due_groups -%}
+            {%- if shown < max_items -%}
+              <div class="sc-grp{% if g.passed %} passed{% endif %}">
+                <div class="sc-when">{{ g.time }}</div>
+                <div class="sc-gbody">
+                  <div class="sc-course">{% if g.course != "" %}{{ g.course }}{% else %}{{ g.items[0].kind }}{% endif %}</div>
+                  {%- for it in g.items -%}
+                    {%- if shown < max_items -%}
+                      {%- assign shown = shown | plus: 1 -%}
+                      {%- if g.course != "" or forloop.index > 1 -%}
+                        <div class="sc-di"><b>{{ it.kind }}</b>{% if it.subject != "" %} · {{ it.subject }}{% endif %}</div>
+                      {%- elsif it.subject != "" -%}
+                        <div class="sc-di">{{ it.subject }}</div>
+                      {%- endif -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if due_count > shown -%}<div class="sc-more">+ {{ due_count | minus: shown }} more</div>{%- endif -%}
+        {%- else -%}
+          <div class="sc-none">Nothing due today</div>
+        {%- endif -%}
+      </div>
+
+      {%- if all_day.size > 0 -%}
+        <div class="sc-allday">
+          <div class="sc-eyebrow">All day</div>
+          <div class="sc-chips">{%- for a in all_day limit: 4 -%}<span class="sc-chip">{{ a.title }}</span>{%- endfor -%}</div>
+        </div>
+      {%- endif -%}
+      {%- if errors.size > 0 -%}<div class="sc-err">Couldn't load {{ errors | join: "; " }}</div>{%- endif -%}
+    </div>
+  </div>
+</div>

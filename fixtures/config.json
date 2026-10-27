@@ -1,0 +1,24 @@
+{
+  "timezone": "America/New_York",
+  "free_gap_min": 45,
+  "sources": [
+    {
+      "id": "classes",
+      "label": "Classes",
+      "file": "fixtures/classes.ics"
+    },
+    {
+      "id": "home",
+      "label": "Home",
+      "tag": "HOME",
+      "busy": false,
+      "file": "fixtures/home.ics"
+    },
+    {
+      "id": "tasks",
+      "label": "Tasks",
+      "kind": "due",
+      "file": "fixtures/tasks.ics"
+    }
+  ]
+}

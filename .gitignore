@@ -1,0 +1,9 @@
+node_modules/
+dist/
+notes/
+.claude/
+.vercel
+.env*
+.DS_Store
+config.json
+!fixtures/config.json

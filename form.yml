@@ -1,0 +1,33 @@
+- keyname: endpoint
+  field_type: url
+  name: Endpoint
+  description: Where you deployed this plugin, with no path after the domain.
+  placeholder: https://your-project.vercel.app
+
+- keyname: token
+  field_type: password
+  name: Token
+  description: The TOKEN you set when deploying.
+
+- keyname: tz
+  field_type: time_zone
+  name: Time zone
+  description: The time zone your calendar lives in.
+
+- keyname: clock
+  field_type: select
+  name: Clock
+  description: How times are written on the screen.
+  options:
+    - 12-hour: "12"
+    - 24-hour: "24"
+  default: "12"
+
+- keyname: gap
+  field_type: number
+  name: Free time from
+  description: Label a gap between commitments as free when it is at least this many minutes. 0 turns the labels off.
+  min: 0
+  max: 240
+  step: 5
+  default: 45

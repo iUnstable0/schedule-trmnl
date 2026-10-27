@@ -1,0 +1,23 @@
+{
+  "timezone": "America/New_York",
+  "sources": [
+    {
+      "id": "school",
+      "label": "School",
+      "url": "webcal://p00-caldav.icloud.com/published/2/PASTE-SHARED-CALENDAR-LINK"
+    },
+    {
+      "id": "home",
+      "label": "Home",
+      "tag": "HOME",
+      "busy": false,
+      "url": "webcal://p00-caldav.icloud.com/published/2/PASTE-SHARED-CALENDAR-LINK"
+    },
+    {
+      "id": "tasks",
+      "label": "Assignments",
+      "kind": "due",
+      "url": "https://canvas.example.edu/feeds/calendars/user_PASTE.ics"
+    }
+  ]
+}

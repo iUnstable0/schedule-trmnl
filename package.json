@@ -1,0 +1,25 @@
+{
+  "name": "schedule-trmnl",
+  "version": "1.0.0",
+  "description": "Schedule view on a TRMNL X",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "dev": "node server.ts",
+    "test": "node test/run.ts",
+    "check": "tsc",
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "dependencies": {
+    "ical.js": "^2.2.1",
+    "luxon": "^3.7.2"
+  },
+  "devDependencies": {
+    "@types/luxon": "^3.7.6",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}
