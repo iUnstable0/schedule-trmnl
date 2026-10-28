@@ -4,6 +4,12 @@ A daily schedule screen for [TRMNL X](https://usetrmnl.com)
 
 Connects to any standard `.ics` / iCal feed (Google Calendar, iCloud, Outlook, Canvas, etc.) and merges them into a single timeline.
 
+<img width="2082" height="1566" alt="CleanShot 2026-10-28 at 01 16 43@2x" src="https://github.com/user-attachments/assets/9f761d9c-3e4c-4cce-805c-e537c6246d1a" />
+
+<img width="2088" height="1558" alt="CleanShot 2026-10-28 at 01 17 28@2x" src="https://github.com/user-attachments/assets/98ee2f80-5473-4920-8215-8fd913b20944" />
+
+<img width="2092" height="1564" alt="CleanShot 2026-10-28 at 01 17 54@2x" src="https://github.com/user-attachments/assets/71e06e20-c115-4482-8545-f96c1787772f" />
+
 ---
 
 ## Quick Setup
