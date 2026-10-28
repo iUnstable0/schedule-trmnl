@@ -98,6 +98,7 @@ export interface Screen {
   events: ScreenEvent[];
   gaps: { y: number; h: number; label: string; state: 'past' | 'next' }[];
   marks: { y: number; count: number; label: string; passed: boolean }[];
+  edges: { side: 'before' | 'after'; label: string; passed: boolean }[];
   has_current: boolean;
   up_next: UpNext | null;
   due: DueItem[];
@@ -396,6 +397,16 @@ export function buildScreen({ items, sources, errors = [], nowMs, day, clock = '
     marks.push({ m: d.m, items: [d], passed: d.passed });
   }
   const markLabel = (items: Due[]) => items.length === 1 && items[0].subject ? `${items[0].kind} · ${items[0].subject}` : items.map((d) => d.kind).join(', ');
+  const edgeLabel = (items: Due[]) => {
+    if (items.length === 1) return [items[0].time, items[0].course, items[0].kind].filter(Boolean).join(' · ');
+    const times = [...new Set(items.map((d) => d.time))];
+    return `${items.length} due · ${times.join(', ')}`;
+  };
+  const edges: Screen['edges'] = [];
+  const early = due.filter((d) => !d.all_day && d.m < ws);
+  const late = due.filter((d) => !d.all_day && d.m > we);
+  if (early.length) edges.push({ side: 'before', label: edgeLabel(early), passed: early.every((d) => d.passed) });
+  if (late.length) edges.push({ side: 'after', label: edgeLabel(late), passed: late.every((d) => d.passed) });
   const dueByEvent = new Map<Timed, string>();
   const words = (s: string) => s.toLowerCase().match(/[a-z0-9]+/g) || [];
   const relates = (e: Timed, d: Due) => {
@@ -468,6 +479,7 @@ export function buildScreen({ items, sources, errors = [], nowMs, day, clock = '
     })),
     gaps,
     marks: floating.map((k) => ({ y: yOf(k.m), count: k.items.length, label: markLabel(k.items), passed: k.passed })),
+    edges,
     has_current: current.length > 0,
     up_next: upNext,
     due: due.map(({ m, ...d }) => d),

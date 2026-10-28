@@ -276,4 +276,23 @@ await test('Short events keep their real height next to the stretched block', as
   assert.equal(lab.rh, lab.h);
 });
 
+await test('Due items outside the window get an edge marker instead of disappearing', async () => {
+  const busy: Config = parseConfig(await readFile(new URL('fixtures/busy.json', root), 'utf8'));
+  const d = await buildToday({ config: busy, load, nowMs: at('2026-10-27T10:00:00-04:00') });
+  assert.equal(d.window.end, '9 PM');
+  assert.deepEqual(d.edges, [{ side: 'after', label: '11:59 PM · Calculus · Problem set', passed: false }]);
+  const vevent = (uid: string, start: string, end: string, title: string) => `BEGIN:VEVENT\nUID:${uid}\nDTSTART;TZID=America/New_York:${start}\nDTEND;TZID=America/New_York:${end}\nSUMMARY:${title}\nEND:VEVENT`;
+  const feeds: Record<string, string> = {
+    cal: `BEGIN:VCALENDAR\n${vevent('e', '20261101T140000', '20261101T160000', 'Study session')}\nEND:VCALENDAR`,
+    due: `BEGIN:VCALENDAR\n${vevent('a', '20261101T080000', '20261101T080000', 'Reading [History]')}\n${vevent('b', '20261101T235900', '20261101T235900', 'Homework [Physics]')}\n${vevent('c', '20261101T220000', '20261101T220000', 'Quiz [Biology]')}\nEND:VCALENDAR`,
+  };
+  const cfg: Config = { timezone: TZ, sources: [{ id: 'cal' }, { id: 'due', kind: 'due' }] };
+  const sun = await buildToday({ config: cfg, load: async (s) => feeds[s.id], nowMs: at('2026-11-01T12:00:00-05:00') });
+  assert.deepEqual(sun.marks, []);
+  assert.deepEqual(sun.edges, [
+    { side: 'before', label: '8:00 AM · History · Reading', passed: true },
+    { side: 'after', label: '2 due · 10:00 PM, 11:59 PM', passed: false },
+  ]);
+});
+
 console.log(`\n${passed} passed`);

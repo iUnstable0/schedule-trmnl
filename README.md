@@ -104,3 +104,7 @@ Save the aliased URL. example: https://poop.vercel.app
 ## Free time
 
 The timeline labels long gaps, for example "2 h 15 min free". A gap only counts as free when it sits between two commitments (meaning an event marked as "busy" unless that entire calendar source was marked as busy: false in config.json)
+
+## Deadlines outside the timeline
+
+The timeline only spans the day's events. A deadline that falls before or after that range, like homework due at 11:59 PM, shows as a small marker with an arrow at the top or bottom edge instead of stretching the timeline.

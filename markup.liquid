@@ -19,6 +19,10 @@
   .sc-mark { position: absolute; right: 10px; max-width: 50%; margin-top: 4px; font-size: 14px; font-weight: 500; line-height: 16px; z-index: 4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .sc-mark.passed { color: #8a8a8a; font-weight: 400; }
   .sc-mark.up { margin-top: -20px; }
+  .sc-edge { position: absolute; right: 8px; max-width: 60%; display: flex; align-items: center; gap: 6px; padding: 2px 0 2px 8px; background: #fff; font-size: 14px; font-weight: 500; line-height: 16px; z-index: 5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sc-edge.passed { color: #8a8a8a; font-weight: 400; }
+  .sc-edge .ic { margin: 0; }
+  .sc-edge span { overflow: hidden; text-overflow: ellipsis; }
   .ev-d { font-size: 15px; font-weight: 500; line-height: 1.3; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .ev--past .ev-d { font-weight: 400; }
 
@@ -84,6 +88,8 @@
 {%- capture ic_clock -%}<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>{%- endcapture -%}
 {%- capture ic_pin -%}<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5s-6.5-5.6-6.5-11.5a6.5 6.5 0 0 1 13 0c0 5.9-6.5 11.5-6.5 11.5z"/><circle cx="12" cy="10" r="2.5"/></svg>{%- endcapture -%}
 {%- capture ic_flag -%}<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 4.5h11.5l-2.5 4.5 2.5 4.5H6"/></svg>{%- endcapture -%}
+{%- capture ic_down -%}<svg class="ic ic--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16"/><path d="M6 14l6 6 6-6"/></svg>{%- endcapture -%}
+{%- capture ic_up -%}<svg class="ic ic--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V4"/><path d="M6 10l6-6 6 6"/></svg>{%- endcapture -%}
 {%- capture ic_flag_sm -%}<svg class="ic ic--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 4.5h11.5l-2.5 4.5 2.5 4.5H6"/></svg>{%- endcapture -%}
 
 <div class="sc">
@@ -132,6 +138,14 @@
           {%- assign ky = k.y | times: TL_H | round -%}
           {%- assign limit = TL_H | minus: 24 -%}
           <div class="sc-mark{% if k.passed %} passed{% endif %}{% if ky > limit %} up{% endif %}" style="top:{{ ky }}px">{{ ic_flag_sm }}{{ k.label }}</div>
+        {%- endfor -%}
+
+        {%- for g in edges -%}
+          {%- if g.side == "before" -%}
+            <div class="sc-edge{% if g.passed %} passed{% endif %}" style="top:-11px">{{ ic_up }}<span>{{ g.label }}</span></div>
+          {%- else -%}
+            <div class="sc-edge{% if g.passed %} passed{% endif %}" style="top:{{ TL_H | minus: 9 }}px">{{ ic_down }}<span>{{ g.label }}</span></div>
+          {%- endif -%}
         {%- endfor -%}
 
         {%- for e in events -%}
