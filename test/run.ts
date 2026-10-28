@@ -269,7 +269,7 @@ END:VCALENDAR`;
 await test('Short events keep their real height next to the stretched block', async () => {
   const busy: Config = parseConfig(await readFile(new URL('fixtures/busy.json', root), 'utf8'));
   const d = await buildToday({ config: busy, load, nowMs: at('2026-10-27T10:00:00-04:00') });
-  const advising = d.events.find((e) => e.title === 'Advising appointment')!;
+  const advising = d.events.find((e) => e.title === 'Mentor check-in')!;
   const lab = d.events.find((e) => e.title === 'Chemistry Lab')!;
   assert.ok(advising.rh < advising.h);
   assert.equal(advising.rh, Math.round((15 / (14 * 60)) * 10000) / 10000);

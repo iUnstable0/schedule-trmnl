@@ -62,7 +62,7 @@ bun install
 bun run dev
 ```
 
-Open `http://localhost:8788/preview.html`. You can drag the time slider to preview how the layout responds at different hours of the day. The Data menu switches between a demo day, a busy demo day, and your own calendars.
+Open `http://localhost:8788/preview.html`. You can drag the time slider to preview how the layout responds at different hours of the day. The Data menu switches between a demo day, a busy demo week, and your own calendars.
 
 ### 3. Deploy
 

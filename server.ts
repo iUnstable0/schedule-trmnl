@@ -9,7 +9,7 @@ const PORT = Number(process.env.PORT || 8788);
 const TYPES: Record<string, string> = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.liquid': 'text/plain', '.ics': 'text/calendar' };
 const FEED_TTL = 10 * 60 * 1000;
 const feeds = new Map<string, { text: string; at: number }>();
-const parsed = new Map<string, Item[]>();
+const parsed = new Map<string, { text: string; items: Item[] }>();
 
 async function loadFeed(url: string, reload: boolean): Promise<string> {
   const hit = feeds.get(url);
@@ -24,9 +24,9 @@ async function itemsCached(s: Source, day: Day, reload: boolean): Promise<Item[]
   const text = s.file ? await readFile(join(ROOT, s.file), 'utf8') : await loadFeed(s.url!, reload);
   const key = `${s.id}|${s.file || s.url}|${day.ymd}`;
   const hit = parsed.get(key);
-  if (hit && !reload) return hit;
+  if (hit && hit.text === text && !reload) return hit.items;
   const items = itemsForDay(text, s, day);
-  parsed.set(key, items);
+  parsed.set(key, { text, items });
   return items;
 }
 
