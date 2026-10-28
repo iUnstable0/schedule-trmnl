@@ -14,6 +14,10 @@ Connects to any standard `.ics` / iCal feed (Google Calendar, iCloud, Outlook, C
 
 ## Quick Setup
 
+`git clone` this repo onto your computer or just download the zip and extract it. doesnt really matter.
+
+then `cd` into the directory and:
+
 ### 1. Configure your calendars
 
 Copy the example file:
