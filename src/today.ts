@@ -49,6 +49,7 @@ export interface ScreenEvent {
   state: EventState;
   y: number;
   h: number;
+  rh: number;
   lane: number;
   lanes: number;
   depth: number;
@@ -396,11 +397,16 @@ export function buildScreen({ items, sources, errors = [], nowMs, day, clock = '
   }
   const markLabel = (items: Due[]) => items.length === 1 && items[0].subject ? `${items[0].kind} · ${items[0].subject}` : items.map((d) => d.kind).join(', ');
   const dueByEvent = new Map<Timed, string>();
+  const words = (s: string) => s.toLowerCase().match(/[a-z0-9]+/g) || [];
+  const relates = (e: Timed, d: Due) => {
+    if (!d.course) return true;
+    const t = new Set(words(e.title));
+    return words(d.course).some((w) => w.length > 2 && t.has(w));
+  };
   const floating = marks.filter((k) => {
-    const host = timed.find((e) => e.sm === k.m && e.em > e.sm);
-    if (!host) return true;
-    dueByEvent.set(host, markLabel(k.items));
-    return false;
+    const host = timed.find((e) => e.sm === k.m && e.em > e.sm && k.items.every((d) => relates(e, d)));
+    if (host) { dueByEvent.set(host, markLabel(k.items)); return false; }
+    return !timed.some((e) => e.sm <= k.m && k.m < e.em);
   });
 
   const meta = (e: Timed) => {
@@ -458,7 +464,7 @@ export function buildScreen({ items, sources, errors = [], nowMs, day, clock = '
     ticks,
     events: timed.map((e) => ({
       title: e.title, meta: meta(e), tag: e.tag, due: dueByEvent.get(e) || '', start_label: fmtClock(e.start, tz, clock),
-      state: e.state, y: yOf(e.vs), h: r4((e.ve - e.vs) / span), lane: e.lane, lanes: e.lanes, depth: e.depth, x: r4(e.x), w: r4(e.w),
+      state: e.state, y: yOf(e.vs), h: r4((e.ve - e.vs) / span), rh: r4((Math.min(Math.max(e.em, e.vs), we) - e.vs) / span), lane: e.lane, lanes: e.lanes, depth: e.depth, x: r4(e.x), w: r4(e.w),
     })),
     gaps,
     marks: floating.map((k) => ({ y: yOf(k.m), count: k.items.length, label: markLabel(k.items), passed: k.passed })),

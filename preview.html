@@ -30,7 +30,7 @@
   <label>Day <input id="day" type="date" value="2026-10-27"></label>
   <button id="reload" type="button">Reload feeds</button>
   <label><input id="live" type="checkbox"> Real "now"</label>
-  <label>Time <input id="slot" type="range" min="0" max="95" value="47"></label>
+  <label>Time <input id="slot" type="range" min="0" max="287" value="141"></label>
   <span class="time" id="timeLabel"></span>
   <label>Clock
     <select id="clock"><option value="12">12-hour</option><option value="24">24-hour</option></select>
@@ -46,14 +46,14 @@
   const engine = new liquidjs.Liquid();
   const pad = (n) => String(n).padStart(2, '0');
   const qs = new URLSearchParams(location.search);
-  if (qs.get('t')) { const [h, m] = qs.get('t').split(':').map(Number); $('slot').value = h * 4 + Math.floor(m / 15); }
+  if (qs.get('t')) { const [h, m] = qs.get('t').split(':').map(Number); $('slot').value = h * 12 + Math.floor(m / 5); }
   if (qs.get('day')) $('day').value = qs.get('day');
   if (qs.get('src')) $('src').value = qs.get('src');
 
   function nowIso() {
     if ($('live').checked) return new Date().toISOString();
     const s = Number($('slot').value);
-    const local = `${$('day').value}T${pad(Math.floor(s / 4))}:${pad((s % 4) * 15)}:00`;
+    const local = `${$('day').value}T${pad(Math.floor(s / 12))}:${pad((s % 12) * 5)}:00`;
     const guess = new Date(local + 'Z');
     const ny = new Date(guess.toLocaleString('en-US', { timeZone: 'America/New_York' }));
     const utc = new Date(guess.toLocaleString('en-US', { timeZone: 'UTC' }));
